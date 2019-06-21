@@ -4,8 +4,8 @@
   "description": "social network for developers",
   "main": "server.js",
   "scripts": {
-    "start": "node server",
-    "server": "nodemon server"
+    "start": "node serve",
+    "serve": "nodemon serve"
   },
   "author": "Gaurav Sushil",
   "license": "ISC",
