@@ -8,7 +8,7 @@ const { check, validationResult } = require("express-validator/check");
 
 //route         POST api/posts
 //description   create post route
-//access        Public
+//access        Private
 
 router.post(
   "/",
@@ -173,6 +173,91 @@ router.delete("/likes/:id", auth, async (req, res) => {
       return res.status(404).json({ msg: "post not found.." });
     }
 
+    res.status(500).json("Server Error");
+  }
+});
+
+//route         POST api/posts/comment/:id
+//description   add comments
+//access        Private
+
+router.post(
+  "/comment/:id",
+  [
+    auth,
+    [
+      check("text", "text is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await User.findById(req.user.id).select("-password");
+      const post = await Post.findById(req.params.id);
+
+      const newcomment = {
+        text: req.body.text,
+        name: user.name,
+        avatar: user.avatar,
+        user: req.user.id
+      };
+
+      post.comments.unshift(newcomment);
+      await post.save();
+
+      res.json(post.comments);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json("Server Error");
+    }
+  }
+);
+
+//route         DELETE api/posts/comment/:id/:commnet_id
+//description   delete comment
+//access        Private
+
+router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json("Post not found");
+    }
+    // pulling comment
+    const comment = post.comments.find(
+      comment => comment.id === req.params.comment_id
+    );
+    // check if comment not found
+    if (!comment) {
+      return res.status(404).json("comment not found");
+    }
+    // check if user is same who commented..
+
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json("user not authorized");
+    }
+
+    //get index of comment to be removed
+    const removeindex = await post.comments
+      .map(comment => comment.user.toString())
+      .indexOf(req.user.id);
+
+    post.comments.splice(removeindex, 1);
+
+    await post.save();
+    res.json("comment removed..");
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "post not found.." });
+    }
     res.status(500).json("Server Error");
   }
 });
