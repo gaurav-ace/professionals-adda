@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 //destructuing from express-validator
 const { check, validationResult } = require("express-validator/check");
 const User = require("../../models/users");
-//route         POST api/users
+//route         POST api/user
 //description   register user
 //access        Public
 
