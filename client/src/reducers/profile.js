@@ -28,12 +28,13 @@ export default function(state = initialState, action) {
     case GET_PROFILES:
       return {
         ...state,
-        pofiles: payload,
+        profiles: payload,
         loading: false
       }
     case GET_REPOS:
       return {
-        ...state
+        ...state,
+        repos: payload
       }
     case PROFILE_ERROR:
       return {
