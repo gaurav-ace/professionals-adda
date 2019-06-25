@@ -1,0 +1,6 @@
+{
+  "mongoURI": "mongodb+srv://gaurav32:gaurav32@professionalsadda-clcqv.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "mysecrettoken",
+  "githubClientId": "1f18c85e981654091dae",
+  "githubClientSecret": "6f9691ca31295584bf2962f364d51b619e0460be"
+}
